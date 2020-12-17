@@ -14,6 +14,7 @@ locals {
     "a_prod" = "1"
     "b_dev"  = "$LATEST"
     "c_qas" = "1"
+    "d_version" = "1"
   }
 
   // to avoid unnecessary lambda function deployments the build version env var is only changed if the lambda function code has been changed

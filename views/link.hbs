@@ -1,0 +1,36 @@
+<div class="content-wrapper" id="{{documentID}}">
+    <h1 class="mdc-typography--headline5">Objektverlinkungen</h1>
+    <div class="content-left">
+        <h2 class="mdc-typography--headline6 link-heading">Vorhandene Verlinkungen</h2>
+        {{#if linkedObjects}}
+            <ul class="mdc-list mdc-list--two-line">
+                {{#each linkedObjects}}
+                    <li class="mdc-list-item" tabindex="0" id="{{this.document}}">
+                        <a class="href_list" href="{{../documentBaseURL}}/{{this.document}}" target="dapi_navigate">
+                            <span class="mdc-list-item__ripple"></span>
+                            <span class="mdc-list-item__text">
+                                <span class="mdc-list-item__primary-text">
+                                    {{this.caption}}
+                                </span>
+                                <span class="mdc-list-item__secondary-text">
+                                    Erstellt am {{this.date}} von {{this.creator}}
+                                </span>
+                            </span>
+                        </a>
+                        <span class="material-icons icon-right remove-link" onclick="removeLink('{{../documentID}}', '{{this.document}}')">
+                            delete
+                        </span>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p>Es wurden keine Objektverlinkungen gefunden</p>
+        {{/if}}
+    </div>
+    <div class="content-right">
+        <h2 class="mdc-typography--headline6">Verlinkung erstellen</h2>
+    </div>
+    {{> snackbar }}
+    {{> dialog question="Wollen Sie diese Verlinkung wirklich löschen?"}}
+    <span id="data-container" data-config="{{config}}"></span>
+</div>

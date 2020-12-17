@@ -1,6 +1,6 @@
 const express = require('express');
 
-module.exports = (appName) => {
+module.exports = (appName, assetBasePath) => {
     const router = express.Router();
     router.get('/', async (req, res) => {
         res.format({
@@ -8,26 +8,20 @@ module.exports = (appName) => {
                 res.send({
                     extensions: [
                         {
-                            id: 'preview',
+                            id: 'able-objectlinks.link',
                             activationConditions: [
-                                {
-                                    propertyId: 'dmsobject.mainblob.content_type',
-                                    operator: 'or',
-                                    values: [
-                                        'text/xml',
-                                    ],
-                                },
-                                {
-                                    propertyId: 'dmsobject.property_filetype',
-                                    operator: 'or',
-                                    values: [
-                                        'xml',
-                                        'XML',
-                                    ],
-                                },
                             ],
-                            uriTemplate: `/${appName}/viewer?docId={dmsobject.property_document_id}`,
-                            context: 'DmsObjectDetailsPreview',
+                            captions: [{
+                                culture: 'de',
+                                caption: 'Objektverlinkungen anzeigen',
+                            },
+                            {
+                                culture: 'en',
+                                caption: 'Show object links',
+                            }],
+                            uriTemplate: `/${appName}/link?docId={dmsobject.property_document_id}`,
+                            context: 'DmsObjectDetailsContextAction',
+                            iconUri: `${assetBasePath}/icon.png`,
                         },
                     ],
                 });

@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
 // const helpers = require('handlebars-helpers')(['string', 'array']);
-const tenant = require('./modules/tenant')(process.env.systemBaseUri, process.env.SIGNATURE_SECRET);
-const requestId = require('./modules/requestid');
+const tenant = require('@ablegroup/tenant')(process.env.systemBaseUri, process.env.SIGNATURE_SECRET);
+const requestId = require('@ablegroup/requestid');
 
 const appName = 'able-objectlink';
 const basePath = `/${appName}`;
@@ -33,8 +33,8 @@ logger.token('tenantId', (req) => req.tenantId);
 logger.token('requestId', (req) => req.requestId);
 
 const rootRouter = require('./routes/root')(basePath, version);
-const dmsobjectextensionsRouter = require('./routes/dmsobjectextensions')(appName);
-const viewerRouter = require('./routes/viewer')(assetBasePath);
+const dmsobjectextensionsRouter = require('./routes/dmsobjectextensions')(appName, assetBasePath);
+const linkRouter = require('./routes/link')(assetBasePath);
 
 // eslint-disable-next-line max-len
 app.use(logger('[ctx@49610 rid=":requestId" tn=":tenantId"][http@49610 method=":method" url=":url" millis=":response-time" sbytes=":res[content-length]" status=":status"] '));
@@ -45,7 +45,7 @@ app.use(assetBasePath, express.static(path.join(__dirname, 'web')));
 
 app.use(`${basePath}/`, rootRouter);
 app.use(`${basePath}/dmsobjectextensions`, dmsobjectextensionsRouter);
-app.use(`${basePath}/viewer`, viewerRouter);
+app.use(`${basePath}/link`, linkRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
