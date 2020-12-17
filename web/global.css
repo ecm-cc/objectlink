@@ -1,0 +1,46 @@
+body {
+   padding: 16px;
+}
+
+.component-wrapper {
+   margin: 22px 0 90px;
+}
+
+.mdc-text-field__input {
+   width: 400px;
+}
+
+.helper-div {
+   margin-bottom: 20px;
+   color: #727272;
+}
+
+.header-config {
+   margin-bottom: 20px;
+   margin-left: 10px;
+}
+
+.basic-switch-label {
+   margin-left: 20px;
+   font-size: 1rem;
+}
+
+.save-button {
+   position: fixed;
+   right: 50px;
+   bottom: 20px;
+}
+
+.mdc-select__selected-text {
+   width: 400px;
+}
+
+#loadedConfig {
+   margin-top: 20px;
+   margin-left: 10px;
+}
+
+.radioWrapper {
+   margin-bottom: 20px;
+   margin-left: -10px;
+}
