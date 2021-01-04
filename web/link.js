@@ -1,29 +1,35 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
 let config;
-let dialog;
+let createDialog; let
+    deleteDialog;
 let snackBar;
+let select;
 
 window.onload = async () => {
+    $('.mdc-linear-progress').hide();
     config = $('#data-container').data('config');
     initMDCElements();
 };
 
 function initMDCElements() {
-    mdc.list.MDCList.attachTo(document.querySelector('.mdc-list'));
-    // mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
-    dialog = mdc.dialog.MDCDialog.attachTo(document.querySelector('.mdc-dialog'));
-    // [].map.call(document.querySelectorAll('.mdc-text-field'), (el) => new mdc.textField.MDCTextField(el));
+    [].map.call(document.querySelectorAll('.mdc-list'), (el) => new mdc.list.MDCList(el));
+    mdc.linearProgress.MDCLinearProgress.attachTo(document.querySelector('.mdc-linear-progress'));
+    createDialog = new mdc.dialog.MDCDialog(document.querySelector('#create-dialog'));
+    deleteDialog = new mdc.dialog.MDCDialog(document.querySelector('#delete-dialog'));
+    mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
     snackBar = new mdc.snackbar.MDCSnackbar(document.querySelector('.mdc-snackbar'));
     snackBar.timeoutMs = 10000;
+    select = new mdc.select.MDCSelect(document.querySelector('.mdc-select'));
 }
 
 function removeLink(documentID, linkedDocumentID) {
-    dialog.open();
-    dialog.listen('MDCDialog:closed', (reason) => {
+    deleteDialog.open();
+    deleteDialog.listen('MDCDialog:closed', (reason) => {
         if (reason.detail.action === 'ok') {
-            showOverlay();
+            $('.mdc-linear-progress').show();
             $.ajax({
                 method: 'DELETE',
                 url: '/able-objectlink/link',
@@ -34,28 +40,70 @@ function removeLink(documentID, linkedDocumentID) {
             }).done(() => {
                 successSnackbar('Die Verlinkung wurde erfolgreich gelöscht.');
                 $(`#${linkedDocumentID}`).remove();
+                $('.mdc-linear-progress').hide();
             }).fail((err) => {
                 console.error(err);
-                failSnackbar(`Die Verlinkung konnte aufgrund eines Fehlers nicht gelöscht werden: ${err.responseText ? err.responseText : err}`);
-            }).always(() => {
-                hideOverlay();
+                failSnackbar(`Die Verlinkung konnte aufgrund eines Fehlers nicht gelöscht werden: ${err.message ? err.message : err}`);
             });
         }
     });
 }
 
-/**
- * Shows a gray overlay for loading purposes
- */
-function showOverlay() {
-    $('#overlay').show();
+function search() {
+    $('.mdc-linear-progress').show();
+    const searchText = $('#search-fulltext').val();
+    const category = select.value;
+    $.ajax({
+        method: 'GET',
+        url: `${config.global.host}/dms/r/${config.global.repositoryId}/sr/?objectdefinitionids=%5B%22${category}%22%5D&fulltext=${searchText}`,
+        headers: {
+            Accept: 'application/hal+json',
+            'Content-Type': 'application/hal+json',
+        },
+    }).done((data) => {
+        renderResults(data);
+    }).fail((err) => {
+        console.error(err);
+        failSnackbar(`Die Suche konnte aufgrund eines Fehlers nicht durchgeführt werden: ${err.message ? err.message : err}`);
+    });
+    $('.mdc-linear-progress').hide();
 }
 
-/**
- * Hides a gray overlay when content is loaded
- */
-function hideOverlay() {
-    $('#overlay').hide();
+function renderResults(results) {
+    $('#result-list').html('');
+    results.items.forEach((item) => {
+        $('#result-list').append(`
+            <li class="mdc-list-item" tabindex="0" id="${item.id}">
+            <a class="href_list" href="${item._links.details}" target="dapi_navigate">
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">
+                    <span class="mdc-list-item__primary-text">
+                        ${item.caption}
+                    </span>
+                    <span class="mdc-list-item__secondary-text">
+                        ${item.sortProperty.name} ${item.sortProperty.displayValue}
+                    </span>
+                </span>
+            </a>
+            <span class="material-icons icon-right remove-link"
+                onclick="addLink('${item.id}')">
+                add
+            </span>
+            </li>
+        `);
+    });
+}
+
+function addLink(remoteDocumentID) {
+    createDialog.open();
+    createDialog.listen('MDCDialog:closed', (reason) => {
+        if (reason.detail.action === 'ok') {
+            const ownID = $('.content-wrapper').attr('id');
+            const creator = ''; // TODO: https://able-group-dev.d-velop.cloud/identityprovider/validate -> data.id
+            const timestamp = Date.now();
+            console.log(ownID, remoteDocumentID, timestamp);
+        }
+    });
 }
 
 /**

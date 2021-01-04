@@ -69,6 +69,32 @@ async function getCreator(userID, userSCIM) {
     return `${foundUser.name.givenName} ${foundUser.name.familyName}`;
 }
 
+async function deleteLinkedObject(documentID, linkedDocumentID, config) {
+    const dbOptions = config.database;
+    dbOptions.ExpressionAttributeValues = {
+        ':a': {
+            S: documentID,
+        },
+        ':b': {
+            S: linkedDocumentID,
+        },
+    };
+    dbOptions.FilterExpression = '(Element_One = :a and Element_Two = :b) or (Element_One = :b and Element_Two = :a)';
+    const scanResult = await dynamoDB.scan(dbOptions).promise();
+    if (scanResult.Count === 0) {
+        throw new Error('Object link not found');
+    } else {
+        const deleteParams = {
+            Key: {
+                LinkID: scanResult.Items[0].LinkID,
+            },
+            TableName: config.database.TableName,
+        };
+        await dynamoDB.deleteItem(deleteParams).promise();
+    }
+}
+
 module.exports = {
     getLinkedObjects,
+    deleteLinkedObject,
 };

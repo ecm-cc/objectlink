@@ -16,6 +16,7 @@
   "homepage": "https://github.com/ecm-cc/objectlink#readme",
   "dependencies": {
     "@ablegroup/httpoptions": "^1.0.3",
+    "@ablegroup/propertymapping": "^1.0.2",
     "@ablegroup/requestid": "^1.0.2",
     "@ablegroup/tenant": "^1.0.0",
     "aws-sdk": "^2.812.0",

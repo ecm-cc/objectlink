@@ -6,7 +6,7 @@
             <ul class="mdc-list mdc-list--two-line">
                 {{#each linkedObjects}}
                     <li class="mdc-list-item" tabindex="0" id="{{this.document}}">
-                        <a class="href_list" href="{{../documentBaseURL}}/{{this.document}}" target="dapi_navigate">
+                        <a class="href_list" href="{{../documentBaseURL}}{{this.document}}" target="dapi_navigate">
                             <span class="mdc-list-item__ripple"></span>
                             <span class="mdc-list-item__text">
                                 <span class="mdc-list-item__primary-text">
@@ -17,7 +17,8 @@
                                 </span>
                             </span>
                         </a>
-                        <span class="material-icons icon-right remove-link" onclick="removeLink('{{../documentID}}', '{{this.document}}')">
+                        <span class="material-icons icon-right remove-link"
+                            onclick="removeLink('{{../documentID}}', '{{this.document}}')">
                             delete
                         </span>
                     </li>
@@ -29,8 +30,60 @@
     </div>
     <div class="content-right">
         <h2 class="mdc-typography--headline6">Verlinkung erstellen</h2>
+
+        <div class="search-container">
+            <div class="mdc-select mdc-select--outlined mdc-select--required">
+                <div class="mdc-select__anchor" aria-required="true">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span id="outlined-select-label" class="mdc-floating-label">Kategorie</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <span class="mdc-select__selected-text-container">
+                        <span class="mdc-select__selected-text"></span>
+                    </span>
+                    <span class="mdc-select__dropdown-icon">
+                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
+                            <polygon class="mdc-select__dropdown-icon-inactive" stroke="none" fill-rule="evenodd"
+                                points="7 10 12 15 17 10">
+                            </polygon>
+                            <polygon class="mdc-select__dropdown-icon-active" stroke="none" fill-rule="evenodd"
+                                points="7 15 12 10 17 15">
+                            </polygon>
+                        </svg>
+                    </span>
+                </div>
+
+                <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                    <ul class="mdc-list">
+                        {{#each categories}}
+                            <li class="mdc-list-item" data-value="{{this.categoryKey}}">
+                                <span class="mdc-list-item__ripple"></span>
+                                <span class="mdc-list-item__text">{{this.displayname}}</span>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+
+
+            {{> input title="Suchbegriff" id="search-fulltext"}}
+
+            {{> button title="Suchen" onclick="search()"}}
+        </div>
+
+        <div class="result-container">
+            <ul class="mdc-list mdc-list--two-line" id="result-list">
+            </ul>
+        </div>
+
+
     </div>
     {{> snackbar }}
-    {{> dialog question="Wollen Sie diese Verlinkung wirklich löschen?"}}
+    {{> dialog question="Wollen Sie diese Verlinkung wirklich löschen?" id="delete-link" }}
+    {{> dialog question="Wollen Sie diese Verlinkung wirklich erstellen?" id="create-link" }}
+    {{> progressbar }}
     <span id="data-container" data-config="{{config}}"></span>
 </div>
