@@ -25,11 +25,11 @@
                 {{/each}}
             </ul>
         {{else}}
-            <p>Es wurden keine Objektverlinkungen gefunden</p>
+            <p class="mdc-typography--body2">Es sind keine Objektverlinkungen vorhanden.</p>
         {{/if}}
     </div>
     <div class="content-right">
-        <h2 class="mdc-typography--headline6">Verlinkung erstellen</h2>
+        <h2 class="mdc-typography--headline6 create-link-heading">Verlinkung erstellen</h2>
 
         <div class="search-container">
             <div class="mdc-select mdc-select--outlined mdc-select--required">
@@ -84,6 +84,5 @@
     {{> snackbar }}
     {{> dialog question="Wollen Sie diese Verlinkung wirklich löschen?" id="delete-link" }}
     {{> dialog question="Wollen Sie diese Verlinkung wirklich erstellen?" id="create-link" }}
-    {{> progressbar }}
-    <span id="data-container" data-config="{{config}}"></span>
+    <span id="data-container" data-config="{{config}}" data-links="{{linkedObjectsStringified}}"></span>
 </div>

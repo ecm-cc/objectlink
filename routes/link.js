@@ -13,6 +13,11 @@ module.exports = (assetBasePath) => {
         const linkedObjects = await databaseLoader.getLinkedObjects(req.query.docId, config, req);
         mapping.initDatabase(process.env.ACCESS_KEY_ID, process.env.SECRET_ACCESS_KEY);
         const categories = await mapping.getAllCategories(config.global.stage.toLowerCase());
+        categories.sort((a, b) => {
+            if (a.displayname > b.displayname) return 1;
+            if (a.displayname < b.displayname) return -1;
+            return 0;
+        });
         res.format({
             'text/html': () => {
                 res.render('link', {
@@ -23,9 +28,9 @@ module.exports = (assetBasePath) => {
                     config: JSON.stringify(config),
                     documentID: req.query.docId,
                     linkedObjects,
+                    linkedObjectsStringified: JSON.stringify(linkedObjects),
                     documentBaseURL: `${config.global.host}/dms/r/${config.global.repositoryId}/o2/`,
                     categories,
-                    // metaData: JSON.stringify(getMetaData(req.systemBaseUri, `${appName}`)),
                 });
             },
             default() {
@@ -34,14 +39,13 @@ module.exports = (assetBasePath) => {
         });
     });
 
-    router.post('/', (req, res) => {
+    router.post('/', async (req, res) => {
         const reqData = req.body;
-        console.log(reqData);
+        const config = configLoader.getLocalConfig(req.get('x-dv-tenant-id'));
+        await databaseLoader.createLinkedObject(reqData.ownID, reqData.remoteDocumentID, reqData.creator, reqData.timestamp, config);
         res.format({
             'application/hal+json': () => {
-                res.send({
-                    // TODO: Create Link
-                });
+                res.sendStatus(200);
             },
             default() {
                 res.status(406).send('Not Acceptable');
