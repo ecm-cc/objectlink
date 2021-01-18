@@ -42,7 +42,7 @@ function getLocalConfig(tenant) {
     case '1ha': return {
         global: {
             host: 'https://able-group-version.d-velop.cloud',
-            repositoryId: '16d943a8-4683-5ffb-b564-f3bf1903a967',
+            repositoryId: '576583f0-8cd0-5796-bc94-e49426e7bbfb',
             stage: 'VERSION',
         },
         database: {
